@@ -1,0 +1,12 @@
+task-management-backend/
+├── models/
+│   └── userModel.js       # User schema
+├── routes/
+│   └── authRoutes.js      # Authentication routes
+├── controllers/
+│   └── authController.js  # Authentication logic
+├── middleware/
+│   └── authMiddleware.js  # JWT verification logic (for later)
+├── .env                   # Environment variables
+├── server.js              # Main server file
+└── package.json           # npm package metadata
