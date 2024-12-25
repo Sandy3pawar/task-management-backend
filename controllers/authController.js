@@ -23,9 +23,14 @@ class AuthController {
 
             // Save the user to the database
             const result = await user.save();
-            console.log(result);
             const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
             // Return success message
+             const userObject = user.toObject();  // Convert to plain JavaScript object
+            const userToken = new UserToken({
+                _id: userObject._id + Math.random().toString(16).slice(2),
+                userId: userObject._id, token: token, expiresAt: new Date(Date.now() + 3600000)
+            })
+            await userToken.save();
             return { success: true, message: "User registered successfully", data: { id: result._id, username, email, role , token} };
         } catch (error) {
             if (error.code === 11000) {
@@ -61,8 +66,6 @@ class AuthController {
             // });
             // await userToken.save();
             const userObject = user.toObject();  // Convert to plain JavaScript object
-            console.log(userObject._id);  // 
-
             const userToken = new UserToken({
                 _id: userObject._id + Math.random().toString(16).slice(2),
                 userId: userObject._id, token: token, expiresAt: new Date(Date.now() + 3600000)
@@ -108,7 +111,6 @@ class AuthController {
             return { message: 'You are not authorized to update this user Please contact the admin', success: false }
         }
         const userRecord = await User.find({ _id: body._id });
-        console.log(userRecord);
         if(userRecord.length === 0) {
             return { message: 'User not found', success: false }
         }
@@ -116,7 +118,6 @@ class AuthController {
             return { message: 'You are not authorized to update this user Please contact the admin', success: false }
         }
         const updatedRec = await User.updateOne({ _id: userRecord[0]._id }, { $set: body });
-        console.log(updatedRec);
         return { message: 'User updated successfully', success: true };
         // return updatedRec;
 
@@ -125,7 +126,6 @@ class AuthController {
         const authToken = authHeaders.authorization;
         const token = authToken.split(' ')[1];
         const userTokenResult = await UserToken.findOne({ token: token });
-        console.log(userTokenResult);
         if (!userTokenResult) {
             return { message: 'Invalid Token Provided', success: false }
         }
@@ -133,7 +133,6 @@ class AuthController {
             return { message: 'Invalid Token Provided', success: false }
         }
         const result = await UserToken.deleteOne({ token: token });
-        console.log(result);
         return { message: 'User logged out successfully', success: true };
     }
 }
