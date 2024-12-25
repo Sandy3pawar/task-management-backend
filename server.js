@@ -17,6 +17,7 @@ app.use("/api/auth", authRoutes);
 
 // mongoDB connections
 console.log('mongo URI', process.env.MONGO_URI);
+console.log('......',process.env.mongoDBURI)
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,}).then(() => {
